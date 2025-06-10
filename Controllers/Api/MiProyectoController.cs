@@ -20,8 +20,10 @@ public class NombreIntegranteController : ControllerBase {
         var db = client.GetDatabase("Escuela_Giovanni_Diego");
         var collection = db.GetCollection<Equipo>("Equipo");
 
-        var list = collection.Find(FilterDefinition<Equipo>.Empty).ToList();
-        return Ok(list);
+        var filter = FilterDefinition<Equipo>.Empty;
+        var item = collection.Find(filter).FirstOrDefault();
+        
+        return Ok(item); 
     }
    
 
