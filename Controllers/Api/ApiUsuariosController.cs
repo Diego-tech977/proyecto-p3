@@ -102,7 +102,7 @@ public class ApiUsuariosController : ControllerBase
 
     [HttpPut("{id}")]
 
-    public IActionResult Create(string id, UsuarioRequest model)
+    public IActionResult Update(string id, UsuariosRequest model)
     {
         // 1. validar el modelo para que contenga datos 
         if(string.IsNullOrWhiteSpace(model.Correo))
@@ -120,20 +120,28 @@ public class ApiUsuariosController : ControllerBase
             return BadRequest("El nombre es requerido");
         }
 
-        /// Validar que el correo no exista
-        var filter = Builders<Usuarios>.Filter.Eq(x => x.Correo, model.Correo);
+        var filter = Builders<Usuarios>.Filter.Eq(x => x.Id, id);
         var item = this.collection.Find(filter).FirstOrDefault();
-        if (item != null)
+        if (item == null)
+        {
+            return NotFound("No existe un usuario con el ID proporcionado");
+        }
+
+        /// Validar que el correo no exista
+        var filterExistente = Builders<Usuarios>.Filter.Eq(x => x.Correo, model.Correo);
+        var itemExistente = this.collection.Find(filterExistente).FirstOrDefault();
+        if (itemExistente != null && itemExistente.Id != id)
         {
             return BadRequest("El corre " + model.Correo + " ya existe en la base de datos");
         }
 
-        Usuarios bd = new Usuarios();
-        bd.Nombre = model.Nombre;
-        bd.Correo = model.Correo;
-        bd.Password = model.Password;
+        var updateOptions = Builders<Usuarios>.Update
+        .Set(x => x.Correo, model.Correo)
+        .Set(x => x.Nombre, model.Nombre)
+        .Set(x => x.Password, model.Password);
 
-        this.collection.InsertOne(bd);
+        this.collection.UpdateOne(filter, updateOptions);
+
         return Ok();   
     }
 

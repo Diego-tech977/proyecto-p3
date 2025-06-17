@@ -8,4 +8,16 @@ public class UsuariosController : Controller
     {
         return View();
     }
+
+
+    [Route("editar/{id}")]
+    public IActionResult Editar(string? id)
+    {
+        ViewBag.ID = id;
+        return View();
+
+
+
+    }
+
 }
