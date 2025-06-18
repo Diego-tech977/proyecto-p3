@@ -10,7 +10,7 @@ public class UsuariosController : Controller
     }
 
 
-    [Route("editar/{id}")]
+    [Route("editar/{id?}")]
     public IActionResult Editar(string? id)
     {
         ViewBag.ID = id;
